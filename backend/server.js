@@ -13,7 +13,7 @@ import Transaction from './models/transactions.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
-const JWT_SECRET = process.env.JWT_SECRET || 'campus-eats-secret-key-2025';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 app.use(cors());
 app.use(express.json());
@@ -71,11 +71,11 @@ app.post('/api/auth/signup', async (req, res) => {
 		}
 		const existing = await User.findOne({ email });
 		if (existing) return res.status(409).json({ error: 'Email already exists' });
-		
+
 		const hashedPassword = await bcrypt.hash(password, 10);
 		const user = await User.create({ email, password: hashedPassword, name, phone });
 		const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
-		
+
 		res.status(201).json({ token, user: { id: user._id, email: user.email, name: user.name, phone: user.phone } });
 	} catch (error) {
 		console.error('Signup error:', error);
@@ -89,13 +89,13 @@ app.post('/api/auth/login', async (req, res) => {
 		if (!email || !password) {
 			return res.status(400).json({ error: 'Email and password required' });
 		}
-		
+
 		const user = await User.findOne({ email });
 		if (!user) return res.status(401).json({ error: 'Invalid credentials' });
-		
+
 		const valid = await bcrypt.compare(password, user.password);
 		if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
-		
+
 		const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
 		res.json({ token, user: { id: user._id, email: user.email, name: user.name, phone: user.phone } });
 	} catch (error) {
@@ -108,11 +108,11 @@ app.get('/api/auth/me', async (req, res) => {
 	try {
 		const token = req.headers.authorization?.replace('Bearer ', '');
 		if (!token) return res.status(401).json({ error: 'No token' });
-		
+
 		const decoded = jwt.verify(token, JWT_SECRET);
 		const user = await User.findById(decoded.userId).select('-password');
 		if (!user) return res.status(404).json({ error: 'User not found' });
-		
+
 		res.json({ user: { id: user._id, email: user.email, name: user.name, phone: user.phone } });
 	} catch (error) {
 		res.status(401).json({ error: 'Invalid token' });
@@ -146,7 +146,7 @@ app.get('/api/orders', async (req, res) => {
 	try {
 		const token = req.headers.authorization?.replace('Bearer ', '');
 		if (!token) return res.status(401).json({ error: 'Unauthorized' });
-		
+
 		const decoded = jwt.verify(token, JWT_SECRET);
 		const list = await Order.find({
 			userId: decoded.userId,
@@ -163,11 +163,11 @@ app.post('/api/orders', async (req, res) => {
 	try {
 		const token = req.headers.authorization?.replace('Bearer ', '');
 		if (!token) return res.status(401).json({ error: 'Authentication required' });
-		
+
 		const decoded = jwt.verify(token, JWT_SECRET);
 		const user = await User.findById(decoded.userId);
 		if (!user) return res.status(404).json({ error: 'User not found' });
-		
+
 		const payload = req.body || {};
 		const order = await Order.create({
 			id: Date.now().toString(),
@@ -217,7 +217,7 @@ app.delete('/api/orders/:id', async (req, res) => {
 app.post('/api/orders/:id/status', async (req, res) => {
 	try {
 		const { status } = req.body || {};
-		const allowed = ['Pending','Accepted','Preparing','Ready','Picked'];
+		const allowed = ['Pending', 'Accepted', 'Preparing', 'Ready', 'Picked'];
 		if (!status || !allowed.includes(status)) {
 			return res.status(400).json({ error: 'Invalid status' });
 		}
@@ -287,7 +287,7 @@ app.post('/api/accept/by-code', async (req, res) => {
 		const order = await Order.findOne({ pickupCode: code });
 		if (!order) return res.status(404).json({ error: 'Order not found' });
 
-		const progression = ['Pending','Accepted','Preparing','Ready','Picked'];
+		const progression = ['Pending', 'Accepted', 'Preparing', 'Ready', 'Picked'];
 		if (progression.indexOf(order.status) < progression.indexOf('Accepted')) {
 			order.status = 'Accepted';
 		}
@@ -454,7 +454,7 @@ app.post('/api/payment/create-order', async (req, res) => {
 app.post('/api/payment/verify', async (req, res) => {
 	try {
 		const { razorpay_order_id, razorpay_payment_id, razorpay_signature, userId, purpose, orderId, amount } = req.body || {};
-		
+
 		// Signature Verification
 		const isTestMode = razorpay_order_id.startsWith('order_test_');
 		if (!isTestMode) {
