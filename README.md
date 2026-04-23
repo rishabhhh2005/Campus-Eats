@@ -13,11 +13,12 @@ Campus Eats is a comprehensive, full-stack food ordering platform designed for u
 - **Context API**: Handles global state for authentication and UI themes.
 
 ### Backend
-- **Node.js & Express.js**: Provides a robust and scalable RESTful API.
+- **Node.js & Express.js**: Provides a robust and scalable RESTful API with a modular **Routes/Controllers/Middleware** architecture.
 - **MongoDB & Mongoose**: NoSQL database used for storing users, orders, transactions, and reviews.
 - **JWT & BcryptJS**: Ensures secure authentication and password encryption.
 - **Razorpay Integration**: Facilitates secure digital payment processing.
 - **Crypto**: Used for verifying server-side payment signatures.
+
 
 ## System Functionality and Workflows
 
@@ -53,19 +54,25 @@ Campus Eats/
 ├── frontend/                # React Frontend Application
 │   ├── src/
 │   │   ├── components/      # Reusable UI components
-│   │   ├── context/         # state management providers
+│   │   ├── context/         # State management providers
 │   │   ├── pages/           # Route-specific views
 │   │   ├── utils/           # API and helper utilities
 │   │   └── data/            # Local static data and mock configurations
 │   ├── tailwind.config.js   # Style configuration
 │   └── vite.config.js       # Build tools configuration
 │
-└── backend/                 # Node.js + Express Backend
+└── backend/                 # Node.js + Express Backend (Modular Architecture)
+    ├── config/              # External service initializations (Razorpay)
+    ├── controllers/         # Request handlers and business logic
     ├── db/                  # Database connection logic
+    ├── middleware/          # Auth and protection middleware
     ├── models/              # Mongoose data schemas
+    ├── routes/              # API endpoint definitions
+    ├── utils/               # Shared helper functions
     ├── .env                 # Environment configuration (Private)
-    └── server.js            # Main API entry point and route definitions
+    └── server.js            # Main entry point mounting all modules
 ```
+
 
 ## Local Development Setup
 
