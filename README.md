@@ -1,112 +1,92 @@
-# Campus Eats
+# Campus Eats 🍔
 
-Campus Eats is a comprehensive, full-stack food ordering platform designed for university campuses. It streamlines the interaction between students and campus food outlets, providing an integrated experience for browsing menus, placing orders, and handling digital payments.
+**Campus Eats** is a full-stack, university-wide food ordering ecosystem designed to bridge the gap between students and campus food outlets. It offers a premium, modern interface for browsing menus, managing a digital wallet, and tracking orders in real-time.
 
-## Architecture and Technology Stack
+![Campus Eats Preview](https://img.shields.io/badge/Status-Complete-success)
+![React](https://img.shields.io/badge/Frontend-React%2019-blue)
+![Node.js](https://img.shields.io/badge/Backend-Node.js-green)
+![MongoDB](https://img.shields.io/badge/Database-MongoDB-emerald)
+
+## 🚀 Key Features
+
+- **🛍️ Seamless Ordering**: Browse multiple outlets, customize carts, and place orders in seconds.
+- **💳 Unified Payments**: Support for both **U-Money** (Internal Wallet) and **Razorpay** (External Gateway).
+- **📦 Order Lifecycle**: Real-time tracking from "Pending" to "Picked Up" with vendor-side QR code verification.
+- **💳 U-Money Wallet**: Instant top-ups and one-tap checkout for a frictionless campus experience.
+- **🎁 Loyalty & Rewards**: Integrated stamp card system and reward points for every purchase.
+- **🏪 Vendor Dashboard**: Comprehensive management tool for outlet staff to accept, prepare, and verify orders.
+- **🌟 Feedback System**: Direct line for users to rate the platform and provide valuable service feedback.
+- **🗺️ Campus Mapping**: Integrated maps to help students locate new stalls and outlets easily.
+
+## 🛠️ Technology Stack
 
 ### Frontend
-- **React.js (v19)**: Built with **Vite** for optimized development and fast rendering.
-- **Tailwind CSS**: Utilized for responsive, utility-first styling with integrated dark mode support.
-- **React Router DOM**: Manages application navigation and routing.
-- **React-Leaflet**: Integrates interactive campus maps for outlet locations.
-- **QR-Scanner**: Enables vendor-side order verification via QR codes.
-- **Context API**: Handles global state for authentication and UI themes.
+- **React 19** & **Vite** (Core Framework)
+- **Tailwind CSS** (Utility-first styling & Dark Mode)
+- **Context API** (Global state management)
+- **Boxicons** (Premium iconography)
 
 ### Backend
-- **Node.js & Express.js**: Provides a robust and scalable RESTful API with a modular **Routes/Controllers/Middleware** architecture.
-- **MongoDB & Mongoose**: NoSQL database used for storing users, orders, transactions, and reviews.
-- **JWT & BcryptJS**: Ensures secure authentication and password encryption.
-- **Razorpay Integration**: Facilitates secure digital payment processing.
-- **Crypto**: Used for verifying server-side payment signatures.
+- **Node.js** & **Express** (RESTful API)
+- **MongoDB** & **Mongoose** (Database & ODM)
+- **JWT** (Stateless authentication)
+- **BcryptJS** (Secure password hashing)
 
+### Integrations
+- **Razorpay** (Digital payment processing)
+- **jsQR** (Frontend QR code decoding)
 
-## System Functionality and Workflows
-
-### 1. Authentication and Security
-- **Registration**: New users can register with their email and phone number. Passwords are encrypted using Salt-hashing.
-- **Authorization**: On login, users receive a JSON Web Token (JWT) used to authorize subsequent requests to protected endpoints.
-- **Session Persistence**: The system maintains user sessions securely across browser transitions.
-
-### 2. Ordering Lifecycle
-- **Discovery**: Users can browse various campus outlets and their respective menus.
-- **Cart Management**: Real-time calculation of order totals and discounts.
-- **Tracking**: Orders progress through defined stages: Pending, Accepted, Preparing, Ready, and Picked.
-- **Verification**: Each order generates a unique 6-character pickup code or QR code for secure fulfillment.
-
-### 3. Payment Systems
-- **U-Money (Digital Wallet)**: An internal credit system allowing users to maintain a balance for quick transactions.
-- **Direct Payments**: Native integration with Razorpay for UPI, card, and net banking transactions.
-- **Verification**: All transactions are verified via server-side HMAC signature checks to prevent fraud.
-
-### 4. Vendor Operations
-- **Dashboard**: Vendors have access to a real-time order management interface.
-- **Order Fulfillment**: Vendors can update order status and verify customer pickup codes to complete the transaction lifecycle.
-
-### 5. Engagement Features
-- **Loyalty Program**: Automatic tracking of loyalty stamps; completing milestones can trigger platform rewards.
-- **Reward Points**: Users earn points based on transaction volume, which can be redeemed on future orders.
-- **Recommendations**: Data-driven suggestions based on trending items and community ratings.
-
-## Project Structure
+## 📂 Project Structure
 
 ```text
 Campus Eats/
-├── frontend/                # React Frontend Application
-│   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── context/         # State management providers
-│   │   ├── pages/           # Route-specific views
-│   │   ├── utils/           # API and helper utilities
-│   │   └── data/            # Local static data and mock configurations
-│   ├── tailwind.config.js   # Style configuration
-│   └── vite.config.js       # Build tools configuration
-│
-└── backend/                 # Node.js + Express Backend (Modular Architecture)
-    ├── config/              # External service initializations (Razorpay)
-    ├── controllers/         # Request handlers and business logic
-    ├── db/                  # Database connection logic
-    ├── middleware/          # Auth and protection middleware
-    ├── models/              # Mongoose data schemas
-    ├── routes/              # API endpoint definitions
-    ├── utils/               # Shared helper functions
-    ├── .env                 # Environment configuration (Private)
-    └── server.js            # Main entry point mounting all modules
+├── frontend/                # React application (Vite + Tailwind)
+│   ├── README.md            ← Frontend specific documentation
+│   └── ...
+├── backend/                 # Node.js API (Express + MongoDB)
+│   ├── README.md            ← Backend specific documentation
+│   └── ...
+└── package.json             # Root workspace configuration
 ```
 
+## ⚙️ Local Setup
 
-## Local Development Setup
+### Prerequisites
+- Node.js (v18+)
+- MongoDB Atlas account or local MongoDB instance
+- Razorpay API Keys (for payment testing)
 
-### Backend Setup
-1. Navigate to the backend directory:
+### Installation
+
+1. **Clone the repository:**
    ```bash
-   cd backend
+   git clone https://github.com/rishabhhh2005/Campus-Eats.git
+   cd Campus-Eats
    ```
-2. Install required dependencies:
+
+2. **Install all dependencies:**
+   The project uses npm workspaces. You can install all dependencies from the root:
    ```bash
-   npm install
+   npm run install-all
    ```
-3. Configure the `.env` file with appropriate MongoDB URI and Razorpay credentials.
-4. Launch the server:
+
+3. **Configure Environment Variables:**
+   - Create a `.env` file in the `backend/` directory (see `backend/.env.example`).
+   - Create a `.env` file in the `frontend/` directory (see `frontend/README.md`).
+
+4. **Run the application:**
+   Launch both frontend and backend concurrently from the root directory:
    ```bash
    npm run dev
    ```
 
-### Frontend Setup
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-2. Install required dependencies:
-   ```bash
-   npm install
-   ```
-3. Launch the development server:
-   ```bash
-   npm run dev
-   ```
+## 📖 documentation
 
-## Deployment Considerations
-Ensure that environment variables are correctly configured in the production environment. The backend handles CORS and security headers, but a proper reverse proxy (like Nginx) or a cloud-native hosting provider is recommended for high-availability deployments.
+For detailed technical documentation on each module, please refer to the individual README files:
+- [Backend Documentation](./backend/README.md)
+- [Frontend Documentation](./frontend/README.md)
 
 ---
-Developed as a professional solution for university dining management.
+
+Developed as a professional solution for university dining management.  
+**Built by Rishabh Puri**

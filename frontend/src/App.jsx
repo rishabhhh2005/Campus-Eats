@@ -7,7 +7,7 @@ import Footer from "./components/Footer.jsx";
 import Home from "./pages/Home.jsx";
 import Orders from "./pages/Orders.jsx";
 import Account from "./pages/Account.jsx";
-import Contact from "./pages/Contact.jsx";
+import Review from "./pages/Review.jsx";
 import Outlet from "./pages/Outlet.jsx";
 import Cart from "./pages/Cart.jsx";
 import Vendor from "./pages/Vendor.jsx";
@@ -33,7 +33,7 @@ export default function App() {
               <Route path="/order-food" element={<Home />} />
               <Route path="/orders" element={<Orders openAuthModal={() => setShowAuthModal(true)} />} />
               <Route path="/account" element={<Account />} />
-              <Route path="/contact" element={<Contact />} />
+              <Route path="/review" element={<Review />} />
               <Route path="/outlet/:slug" element={<Outlet />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/wallet" element={<Wallet />} />

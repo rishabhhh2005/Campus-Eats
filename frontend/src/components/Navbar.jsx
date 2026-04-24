@@ -44,7 +44,7 @@ export default function Navbar({ authModalOpen, setAuthModalOpen, setVendorModal
             { to: "/order-food", label: "Order Food" },
             { to: "/orders", label: "Orders" },
             { to: "/account", label: "Account" },
-            { to: "/contact", label: "Contact" },
+            { to: "/review", label: "Review" },
           ].map((item) => (
             <NavLink
               key={item.to}
@@ -156,7 +156,7 @@ export default function Navbar({ authModalOpen, setAuthModalOpen, setVendorModal
             { to: "/order-food", label: "Order Food" },
             { to: "/orders", label: "Orders" },
             { to: "/account", label: "Account" },
-            { to: "/contact", label: "Contact" },
+            { to: "/review", label: "Review" },
             { to: "/vendor", label: "Vendor" },
           ].map((item) => (
             item.to === "/vendor" ? (

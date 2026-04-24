@@ -18,21 +18,24 @@ export default function Account() {
 
   const fetchUserData = async () => {
     try {
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+
       const [loyaltyRes, rewardsRes, umoneyRes] = await Promise.all([
-        fetch(`${API_URL}/loyalty/status/${user.id}`),
-        fetch(`${API_URL}/rewards/balance/${user.id}`),
-        fetch(`${API_URL}/umoney/balance/${user.id}`)
+        fetch(`${API_URL}/loyalty/status`,          { headers }),
+        fetch(`${API_URL}/loyalty/rewards/balance`, { headers }),
+        fetch(`${API_URL}/wallet/balance`,          { headers }),
       ]);
 
       const loyaltyData = await loyaltyRes.json();
       const rewardsData = await rewardsRes.json();
-      const umoneyData = await umoneyRes.json();
+      const umoneyData  = await umoneyRes.json();
 
-      setLoyaltyStamps(loyaltyData.stamps || 0);
-      setRewardPoints(rewardsData.points || 0);
-      setUMoneyBalance(umoneyData.balance || 0);
+      setLoyaltyStamps(loyaltyData.stamps  || 0);
+      setRewardPoints(rewardsData.points   || 0);
+      setUMoneyBalance(umoneyData.balance  || 0);
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      console.error('Error fetching user data:', error);
     }
   };
 

@@ -1,29 +1,32 @@
 import express from 'express';
 import {
-	getAllOrders,
-	getUserOrders,
-	createOrder,
-	deleteOrder,
-	updateOrderStatus,
-	getPickupCode,
-	pickupByCode,
-	acceptByCode
+  getAllOrders,
+  getUserOrders,
+  createOrder,
+  deleteOrder,
+  updateOrderStatus,
+  getPickupCode,
+  pickupByCode,
+  acceptByCode,
+  hideOrderForVendor,
 } from '../controllers/orderController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Order operations
-router.get('/orders/all', getAllOrders);
-router.get('/orders', protect, getUserOrders);
-router.post('/orders', protect, createOrder);
-router.delete('/orders/:id', protect, deleteOrder);
-router.post('/orders/:id/status', updateOrderStatus);
-router.get('/orders/:id/pickup-code', getPickupCode);
+// ── Order CRUD ────────────────────────────────────────────────────────────────
+router.get('/',    protect, getUserOrders);   // GET  /api/orders        — user's orders
+router.post('/',   protect, createOrder);     // POST /api/orders        — place order
+router.delete('/:id', protect, deleteOrder);  // DEL  /api/orders/:id    — cancel order
 
-// Pickup and Accept operations
-router.post('/pickup/by-code', pickupByCode);
-router.post('/accept/by-code', acceptByCode);
+// ── Order Status & Pickup Code ────────────────────────────────────────────────
+router.patch('/:id/status',      updateOrderStatus); // PATCH /api/orders/:id/status
+router.get('/:id/pickup-code',   getPickupCode);     // GET   /api/orders/:id/pickup-code
 
+// ── Vendor Operations (no user auth — vendor-side scanning) ──────────────────
+router.get('/all',           getAllOrders);   // GET  /api/orders/all
+router.post('/pickup/verify', pickupByCode); // POST /api/orders/pickup/verify
+router.post('/accept/verify', acceptByCode); // POST /api/orders/accept/verify
+router.delete('/:id/hide',   hideOrderForVendor); // DELETE /api/orders/:id/hide
 
 export default router;

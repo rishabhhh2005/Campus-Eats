@@ -21,7 +21,9 @@ const orderSchema = new mongoose.Schema({
 	status: { type: String, enum: ['Pending','Accepted','Preparing','Ready','Picked'], default: 'Pending' },
 	paid: { type: Boolean, default: false },
 	timestamp: { type: Date, default: Date.now },
-	pickupCode: { type: String, index: true }
+	pickupCode: { type: String, index: true },
+	paymentType: { type: String, default: 'Cash' },
+	hiddenForVendor: { type: Boolean, default: false }
 }, {
 	versionKey: false
 });

@@ -3,6 +3,6 @@ import { getCampuses } from '../controllers/campusController.js';
 
 const router = express.Router();
 
-router.get('/campuses', getCampuses);
+router.get('/', getCampuses);
 
 export default router;

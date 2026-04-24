@@ -18,9 +18,13 @@ const RazorPayReact = ({ amount, userId, purpose = 'umoney', orderId = null, onS
 
   const handleTestPayment = async () => {
     // Open Razorpay first, then auto-complete
+    const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/payment/create-order`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({ amount, currency: 'INR', receipt: `rcpt_${Date.now()}` })
     });
     const data = await res.json();
@@ -40,9 +44,13 @@ const RazorPayReact = ({ amount, userId, purpose = 'umoney', orderId = null, onS
       order_id: order.id,
       handler: async function (response) {
         // Auto-complete: simulate successful payment
+        const token = localStorage.getItem('token');
         const verifyRes = await fetch(`${API_URL}/payment/verify`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
@@ -97,9 +105,13 @@ const RazorPayReact = ({ amount, userId, purpose = 'umoney', orderId = null, onS
     }
 
     // create order on backend
+    const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/payment/create-order`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({ amount, currency: 'INR', receipt: `rcpt_${Date.now()}` })
     });
     const data = await res.json();
@@ -118,10 +130,13 @@ const RazorPayReact = ({ amount, userId, purpose = 'umoney', orderId = null, onS
       description: purpose === 'umoney' ? 'Wallet top-up' : 'Order payment',
       order_id: order.id,
       handler: async function (response) {
-        // verify on backend
+        const token = localStorage.getItem('token');
         const verifyRes = await fetch(`${API_URL}/payment/verify`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,

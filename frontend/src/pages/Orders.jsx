@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import ConfirmDialog from "../components/ConfirmDialog";
-import { getOrders, getPickupCode } from "../utils/api";
+import { getOrders, getPickupCode, deleteOrder } from "../utils/api";
 import { OUTLETS } from "../data/outlets.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import 'boxicons/css/boxicons.min.css';
@@ -43,9 +43,8 @@ const [downloadedId, setDownloadedId] = useState(null);
     const fetchOrders = async () => {
       try {
         const data = await getOrders();
-        const deletedOrderIds = JSON.parse(localStorage.getItem('deletedOrderIds') || '[]');
         const valid = (data || []).filter(
-          (o) => o?.items?.length > 0 && (o.payable ?? o.total ?? 0) > 0 && !deletedOrderIds.includes(o.id)
+          (o) => o?.items?.length > 0 && (o.payable ?? o.total ?? 0) > 0
         );
         const sorted = [...valid].sort(
           (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
@@ -109,15 +108,8 @@ const [downloadedId, setDownloadedId] = useState(null);
 
   const doDelete = async (id) => {
     try {
-      // Remove from frontend only, without deleting from backend
+      await deleteOrder(id);
       setOrders((prevOrders) => prevOrders.filter((order) => order.id !== id));
-      
-      // Store deleted order ID in localStorage to persist across reloads
-      const deletedOrderIds = JSON.parse(localStorage.getItem('deletedOrderIds') || '[]');
-      if (!deletedOrderIds.includes(id)) {
-        deletedOrderIds.push(id);
-        localStorage.setItem('deletedOrderIds', JSON.stringify(deletedOrderIds));
-      }
     } catch (err) {
       console.error('Failed to delete order:', err);
       alert(err?.message || 'Failed to delete order');

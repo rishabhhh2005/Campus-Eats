@@ -56,29 +56,19 @@ export const getPickupCode = async (orderId) => {
   }
 };
 
-export const markPickedUp = async (orderId, code) => {
-  try {
-    const res = await fetch(`${API_URL}/orders/${orderId}/pickup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code })
-    });
-    if (!res.ok) throw new Error('Failed to mark pickup');
-    return await res.json();
-  } catch (error) {
-    console.error('Error marking pickup:', error);
-    throw error;
-  }
-};
+
 
 export const pickupByCode = async (code) => {
   try {
-    const res = await fetch(`${API_URL}/pickup/by-code`, {
+    const res = await fetch(`${API_URL}/orders/pickup/verify`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code })
     });
-    if (!res.ok) throw new Error('Failed to pick by code');
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || 'Failed to pick by code');
+    }
     return await res.json();
   } catch (error) {
     console.error('Error picking by code:', error);
@@ -86,27 +76,19 @@ export const pickupByCode = async (code) => {
   }
 };
 
-export const acceptOrder = async (orderId) => {
-  try {
-    const res = await fetch(`${API_URL}/orders/${orderId}/accept`, {
-      method: 'POST'
-    });
-    if (!res.ok) throw new Error('Failed to accept order');
-    return await res.json();
-  } catch (error) {
-    console.error('Error accepting order:', error);
-    throw error;
-  }
-};
+
 
 export const updateOrderStatus = async (orderId, status) => {
   try {
     const res = await fetch(`${API_URL}/orders/${orderId}/status`, {
-      method: 'POST',
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status })
     });
-    if (!res.ok) throw new Error('Failed to update status');
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || 'Failed to update status');
+    }
     return await res.json();
   } catch (error) {
     console.error('Error updating status:', error);
@@ -116,12 +98,15 @@ export const updateOrderStatus = async (orderId, status) => {
 
 export const acceptByCode = async (code) => {
   try {
-    const res = await fetch(`${API_URL}/accept/by-code`, {
+    const res = await fetch(`${API_URL}/orders/accept/verify`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code })
     });
-    if (!res.ok) throw new Error('Failed to accept by code');
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || 'Failed to accept by code');
+    }
     return await res.json();
   } catch (error) {
     console.error('Error accepting by code:', error);
@@ -145,6 +130,39 @@ export const deleteOrder = async (orderId) => {
     return await res.json();
   } catch (error) {
     console.error('Error deleting order:', error);
+    throw error;
+  }
+};
+
+export const submitFeedback = async (feedbackData) => {
+  try {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/feedback`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(feedbackData)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to submit feedback');
+    return data;
+  } catch (error) {
+    console.error('Error submitting feedback:', error);
+    throw error;
+  }
+};
+
+export const hideOrderForVendor = async (orderId) => {
+  try {
+    const res = await fetch(`${API_URL}/orders/${orderId}/hide`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) throw new Error('Failed to hide order');
+    return await res.json();
+  } catch (error) {
+    console.error('Error hiding order:', error);
     throw error;
   }
 };

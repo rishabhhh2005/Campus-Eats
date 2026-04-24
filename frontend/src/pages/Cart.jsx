@@ -45,13 +45,16 @@ export default function Cart() {
   const fetchUserBalances = async () => {
     try {
       if (!user) return;
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+
       const [rewardsRes, umoneyRes] = await Promise.all([
-        fetch(`${API_URL}/rewards/balance/${user.id}`),
-        fetch(`${API_URL}/umoney/balance/${user.id}`)
+        fetch(`${API_URL}/loyalty/rewards/balance`, { headers }),
+        fetch(`${API_URL}/wallet/balance`,          { headers }),
       ]);
       const rewardsData = await rewardsRes.json();
-      const umoneyData = await umoneyRes.json();
-      setRewardPoints(rewardsData.points || 0);
+      const umoneyData  = await umoneyRes.json();
+      setRewardPoints(rewardsData.points  || 0);
       setUMoneyBalance(umoneyData.balance || 0);
     } catch (error) {
       console.error('Error fetching balances:', error);
@@ -123,15 +126,17 @@ export default function Cart() {
   const handleConfirmOrder = async () => {
     try {
       const outlet = OUTLETS.find((o) => o.slug === cart.outlet);
+      const { finalAmount } = calculateFinalAmount();
       const orderData = {
         items: cart.items,
         total,
         discount,
-        payable: calculateFinalAmount().finalAmount,
+        payable: finalAmount,
         outlet: outlet?.name || "Unknown Outlet",
         campus: getCampus(),
         status: "Pending",
-        paymentType: paymentMethod === 'card' ? 'Online' : paymentMethod === 'umoney' ? 'U-Money' : 'Cash'
+        paymentType: finalAmount === 0 && (useRewards || useUMoney) ? 'Points/Wallet' : (paymentMethod === 'card' ? 'Online' : 'Cash'),
+        paid: finalAmount === 0
       };
 
       // After confirm, open mock payment
@@ -165,14 +170,10 @@ export default function Cart() {
 
   const finalizeAfterSave = async (orderResponse, finalAmount) => {
     try {
-      // award points and show popup
-      const pointsEarned = Math.floor(total * 0.10);
+      // Reward points are awarded automatically by createOrder on the backend.
+      // Show a popup based on estimated points earned (1 pt per ₹10).
+      const pointsEarned = Math.floor(total / 10);
       if (pointsEarned > 0) {
-        await fetch(`${API_URL}/rewards/add`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: user.id, points: pointsEarned })
-        });
         setEarnedPoints(pointsEarned);
         setShowRewardPopup(true);
       }
@@ -200,10 +201,11 @@ export default function Cart() {
 
       // Redeem rewards if used
       if (rewardsUsed > 0) {
-        await fetch(`${API_URL}/rewards/redeem`, {
+        const token = localStorage.getItem('token');
+        await fetch(`${API_URL}/loyalty/rewards/redeem`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: user.id, points: rewardsUsed })
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ points: rewardsUsed }),
         });
         setRewardPoints(prev => Math.max(0, prev - rewardsUsed));
       }
@@ -217,20 +219,12 @@ export default function Cart() {
         outlet: outlet?.name || "Unknown Outlet",
         campus: getCampus(),
         status: "Pending",
-        paymentType: paymentMethod === 'card' ? 'Online' : paymentMethod === 'umoney' ? 'U-Money' : 'Cash'
+        paymentType: finalAmount === 0 && (useRewards || useUMoney) ? 'Points/Wallet' : (paymentMethod === 'card' ? 'Online' : 'Cash'),
+        paid: finalAmount === 0
       };
 
       // If final payable is zero, complete order immediately (no Razorpay)
       if (finalAmount === 0) {
-        // If U-Money is applied, deduct it first
-        if (umoneyUsed > 0) {
-          await fetch(`${API_URL}/umoney/deduct`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: user.id, amount: umoneyUsed })
-          });
-        }
-
         const response = await saveOrder(orderData);
         if (response.error) throw new Error(response.error);
         await finalizeAfterSave(response, finalAmount);
@@ -244,15 +238,6 @@ export default function Cart() {
         setPaymentResult(null);
         setWaitingOpen(true);
         return;
-      }
-
-      // If U-Money used, deduct before saving (applies regardless of payment method)
-      if (umoneyUsed > 0) {
-        await fetch(`${API_URL}/umoney/deduct`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: user.id, amount: umoneyUsed })
-        });
       }
 
       // For cash or any non-card flows: save order immediately
@@ -283,7 +268,8 @@ export default function Cart() {
         outlet: outlet?.name || "Unknown Outlet",
         campus: getCampus(),
         status: "Pending",
-        paymentType: 'Online'
+        paymentType: 'Online',
+        paid: true
       };
 
       const response = await saveOrder(orderData);
@@ -297,20 +283,15 @@ export default function Cart() {
     }
   };
 
-  // helper to process stamp counts locally and award on every 5th order
+  // track order count locally and show a stamp popup every 5 orders
   const processStamps = async () => {
     try {
       if (!user) return;
-      const key = `order_count_${user.id}`;
+      const key  = `order_count_${user.id}`;
       const prev = parseInt(localStorage.getItem(key) || '0', 10);
       const next = prev + 1;
       localStorage.setItem(key, String(next));
       if (next % 5 === 0) {
-        // award a small reward (e.g., 25 points) and notify
-        await fetch(`${API_URL}/rewards/add`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: user.id, points: 25 })
-        }).catch(() => {});
         setStampPopup({ open: true, message: `Congrats — you earned a stamp! This is order #${next}.` });
       }
     } catch (e) {

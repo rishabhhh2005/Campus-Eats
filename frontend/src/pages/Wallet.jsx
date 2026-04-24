@@ -25,12 +25,15 @@ export default function WalletPage() {
 
   const fetchWalletData = async () => {
     try {
-      const [balanceRes, transactionsRes] = await Promise.all([
-          fetch(`${API_URL}/umoney/balance/${user.id}`),
-          fetch(`${API_URL}/umoney/transactions/${user.id}`)
-        ]);
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
 
-      const balanceData = await balanceRes.json();
+      const [balanceRes, transactionsRes] = await Promise.all([
+        fetch(`${API_URL}/wallet/balance`,      { headers }),
+        fetch(`${API_URL}/wallet/transactions`, { headers }),
+      ]);
+
+      const balanceData      = await balanceRes.json();
       const transactionsData = await transactionsRes.json();
 
       setBalance(balanceData.balance || 0);

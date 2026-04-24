@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { getAllOrders, updateOrderStatus, acceptByCode } from "../utils/api";
+import { getAllOrders, updateOrderStatus, acceptByCode, hideOrderForVendor } from "../utils/api";
 import jsQR from "jsqr";
 
 const isMobile =
@@ -133,6 +133,15 @@ export default function Vendor() {
   const handleAdvance = async (id, next) => {
     const res = await updateOrderStatus(id, next);
     setOrders(prev => prev.map(o => (o.id === id ? res.order : o)));
+  };
+
+  const handleHide = async (id) => {
+    try {
+      await hideOrderForVendor(id);
+      setOrders(prev => prev.filter(o => o.id !== id));
+    } catch (e) {
+      alert("Failed to hide order: " + e.message);
+    }
   };
 
   return (
@@ -273,6 +282,9 @@ export default function Vendor() {
                   {o.status === "Ready" && (
                     <Action color="blue" onClick={() => handleAdvance(o.id, "Picked")}>Picked</Action>
                   )}
+                  {o.status === "Picked" && (
+                    <Action color="red" onClick={() => handleHide(o.id)}>Clear</Action>
+                  )}
                 </div>
               </div>
             ))}
@@ -289,6 +301,7 @@ function Action({ children, onClick, color }) {
     indigo: "bg-indigo-600 hover:bg-indigo-700",
     amber: "bg-amber-600 hover:bg-amber-700",
     blue: "bg-blue-600 hover:bg-blue-700",
+    red: "bg-red-600 hover:bg-red-700",
   };
 
   return (

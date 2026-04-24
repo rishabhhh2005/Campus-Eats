@@ -1,5 +1,4 @@
 import OutletCard from "../components/OutletCard.jsx";
-import BestRatedToday from "../components/BestRatedToday.jsx";
 // TrendingModal temporarily disabled to avoid import resolution errors during dev
 import { useMemo, useState, useEffect, useRef } from "react";
 import { getOutletsForCampus } from "../data/campus.js";
@@ -101,11 +100,7 @@ export default function Home() {
         </div>
       </div>
 
-      {!q.trim() && (
-        <div className="space-y-8">
-          <BestRatedToday />
-        </div>
-      )}
+
 
       {q.trim() && dishResults.length > 0 && (
         <div className="space-y-3">
