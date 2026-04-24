@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function VendorModal({ isOpen, onClose }) {
   const [vendorCode, setVendorCode] = useState("V001");
-  const [university, setUniversity] = useState("Chitkara University");
+  const [university, setUniversity] = useState("Campus University");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -17,7 +17,7 @@ export default function VendorModal({ isOpen, onClose }) {
   const handleSignIn = (e) => {
     e?.preventDefault();
     const codeOk = (vendorCode || "").trim().toUpperCase() === "V001";
-    const uniOk = (university || "").toLowerCase().includes("chitkara");
+    const uniOk = (university || "").toLowerCase().includes("campus");
     if (codeOk && uniOk) {
       localStorage.setItem("vendorAuth", "true");
       localStorage.setItem("vendorCode", vendorCode.trim().toUpperCase());

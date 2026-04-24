@@ -9,11 +9,8 @@ import authRoutes from './routes/authRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import recommendationRoutes from './routes/recommendationRoutes.js';
 import loyaltyRoutes from './routes/loyaltyRoutes.js';
-import rewardRoutes from './routes/rewardRoutes.js';
 import walletRoutes from './routes/walletRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
-import pickupRoutes from './routes/pickupRoutes.js';
-import acceptRoutes from './routes/acceptRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -26,16 +23,15 @@ app.use(express.json());
 connectDB();
 
 // Route Middlewares
-app.use('/api/campuses', campusRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/recommendations', recommendationRoutes);
-app.use('/api/loyalty', loyaltyRoutes);
-app.use('/api/rewards', rewardRoutes);
-app.use('/api/umoney', walletRoutes);
-app.use('/api/payment', paymentRoutes);
-app.use('/api/pickup', pickupRoutes);
-app.use('/api/accept', acceptRoutes);
+app.use('/api', authRoutes);
+app.use('/api', campusRoutes);
+app.use('/api', orderRoutes);
+app.use('/api', recommendationRoutes);
+app.use('/api', loyaltyRoutes);
+app.use('/api', walletRoutes);
+app.use('/api', paymentRoutes);
+
+
 
 // Start Server
 app.listen(port, "0.0.0.0", () => {

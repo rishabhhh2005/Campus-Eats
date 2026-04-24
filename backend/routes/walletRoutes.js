@@ -1,10 +1,9 @@
 import express from 'express';
-import { getBalance, getTransactions, addMoney } from '../controllers/walletController.js';
+import { getBalance, getTransactions } from '../controllers/walletController.js';
 
 const router = express.Router();
 
-router.get('/balance/:userId', getBalance);
-router.get('/transactions/:userId', getTransactions);
-router.post('/add', addMoney);
+router.get('/umoney/balance/:userId', getBalance);
+router.get('/umoney/transactions/:userId', getTransactions);
 
 export default router;

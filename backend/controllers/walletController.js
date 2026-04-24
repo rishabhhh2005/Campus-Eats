@@ -22,24 +22,3 @@ export const getTransactions = async (req, res) => {
 	}
 };
 
-export const addMoney = async (req, res) => {
-	try {
-		const { userId, amount } = req.body;
-		const user = await User.findById(userId);
-		if (!user) return res.status(404).json({ error: 'User not found' });
-
-		user.uMoneyBalance = (user.uMoneyBalance || 0) + amount;
-		await user.save();
-
-		await Transaction.create({
-			userId,
-			type: 'credit',
-			amount,
-			description: 'Wallet top-up'
-		});
-
-		res.json({ balance: user.uMoneyBalance });
-	} catch (error) {
-		res.status(500).json({ error: 'Internal server error' });
-	}
-};

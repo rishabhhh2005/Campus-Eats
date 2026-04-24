@@ -9,7 +9,7 @@ const isMobile =
 
 export default function Vendor() {
   const [code, setCode] = useState("");
-  const [university, setUniversity] = useState("Chitkara University");
+  const [university, setUniversity] = useState("Campus University");
   const [vendorCode, setVendorCode] = useState(() => localStorage.getItem("vendorCode") || "V001");
   const [vendorAuth, setVendorAuth] = useState(() => !!localStorage.getItem("vendorAuth"));
   const [mode, setMode] = useState("paste");

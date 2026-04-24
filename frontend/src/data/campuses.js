@@ -7,7 +7,7 @@ export const CAMPUSES = [
   {
     campusId: "punjab",
     campusName: "Punjab",
-    universityName: "Chitkara University",
+    universityName: "Campus University",
     city: "Punjab",
     state: "Punjab",
     logo: null,

@@ -3,7 +3,7 @@ import { getBestRatedToday, getTrending } from '../controllers/recommendationCon
 
 const router = express.Router();
 
-router.get('/best-rated-today', getBestRatedToday);
-router.get('/trending', getTrending);
+router.get('/recommendations/best-rated-today', getBestRatedToday);
+router.get('/recommendations/trending', getTrending);
 
 export default router;
