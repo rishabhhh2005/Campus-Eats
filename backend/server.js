@@ -21,6 +21,11 @@ app.use(express.json());
 // ── Database ─────────────────────────────────────────────────────────────────
 connectDB();
 
+// ── Health Check ──────────────────────────────────────────────────────────────
+app.get('/', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'Server is running' });
+});
+
 // ── Routes ───────────────────────────────────────────────────────────────────
 app.use('/api/auth',     authRoutes);
 app.use('/api/campuses', campusRoutes);
