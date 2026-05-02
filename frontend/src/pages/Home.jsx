@@ -1,6 +1,7 @@
 import OutletCard from "../components/OutletCard.jsx";
 // TrendingModal temporarily disabled to avoid import resolution errors during dev
 import { useMemo, useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { getOutletsForCampus } from "../data/campus.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useCampus } from "../context/CampusContext.jsx";
@@ -107,9 +108,9 @@ export default function Home() {
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Dishes</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {dishResults.map(({ dish, outlet }) => (
-              <a
+              <Link
                 key={`${outlet.slug}-${dish.id}`}
-                href={`/outlet/${outlet.slug}`}
+                to={`/outlet/${outlet.slug}`}
                 className="bg-white dark:bg-gray-800 rounded-xl p-4 flex items-center gap-4 shadow hover:shadow-md transition"
               >
                 <div className="w-20 h-20 rounded overflow-hidden bg-neutral-100 dark:bg-neutral-700">
@@ -135,7 +136,7 @@ export default function Home() {
                   <div className="text-sm text-neutral-600 dark:text-neutral-400 truncate">{outlet.name}</div>
                   <div className="text-sm text-neutral-800 dark:text-neutral-200">₹{dish.price}</div>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
